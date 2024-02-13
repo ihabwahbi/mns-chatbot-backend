@@ -18,5 +18,5 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         response_message = json.dumps({"message": "I am still getting developed, be patient! I'll get smarter I promise!"})
         return func.HttpResponse(response_message, mimetype="application/json", status_code=200)
     else:
-        response_message = json.dumps({"message": "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."})
+        response_message = json.dumps({"message": "How can I help?"})
         return func.HttpResponse(response_message, mimetype="application/json", status_code=200)
