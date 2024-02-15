@@ -2,7 +2,7 @@
 from utils.database.db_manager import get_material_info
 
 def test_get_material_info():
-    material_id = "B012828"
+    material_id = "H115576"
     result = get_material_info(material_id)
     print("Test Result:", result)
 

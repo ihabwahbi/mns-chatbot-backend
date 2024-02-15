@@ -5,16 +5,16 @@ import json
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
-    name = req.params.get('name')
-    if not name:
+    prompt = req.params.get('prompt')
+    if not prompt:
         try:
             req_body = req.get_json()
         except ValueError:
             pass
         else:
-            name = req_body.get('name')
+            [prompt] = req_body.get('prompt')
 
-    if name:
+    if prompt:
         response_message = json.dumps({"message": "I am still getting developed, be patient! I'll get smarter I promise!"})
         return func.HttpResponse(response_message, mimetype="application/json", status_code=200)
     else:
