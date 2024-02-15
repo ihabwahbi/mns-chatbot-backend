@@ -12,7 +12,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         except ValueError:
             pass
         else:
-            [prompt] = req_body.get('prompt')
+            prompt = req_body.get('prompt')
 
     if prompt:
         response_message = json.dumps({"message": "I am still getting developed, be patient! I'll get smarter I promise!"})
