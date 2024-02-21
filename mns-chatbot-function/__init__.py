@@ -3,6 +3,7 @@ import logging
 import json
 from utils.openai.openai_manager import openai_handle_initial_msg
 
+
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
     try:
