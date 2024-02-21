@@ -40,7 +40,7 @@ def openai_handle_initial_msg(prompt):
             )
             manager_message = messages.data[0].content[0].text.value
             print(manager_message)
-            exit()
+            return manager_message
         else:
             # If not, wait for some time before checking again
             time.sleep(2)  # Wait for 2 seconds
@@ -86,8 +86,8 @@ def openai_handle_initial_msg(prompt):
             messages = client.beta.threads.messages.list(thread_id=thread_id)
             manager_message = messages.data[0].content[0].text.value
             print(manager_message)
-            exit()
+            return manager_message
         else:
             # If not, wait for some time before checking again
             time.sleep(2)  # Wait for 2 seconds
-    return manager_message
+    

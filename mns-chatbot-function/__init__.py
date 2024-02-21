@@ -1,7 +1,7 @@
 import azure.functions as func
 import logging
 import json
-from openai_manager import openai_handle_initial_msg
+from utils.openai.openai_manager import openai_handle_initial_msg
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
@@ -10,7 +10,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     except ValueError:
         return func.HttpResponse(json.dumps({"message": "Invalid input. Please ensure your request is properly formatted."}), status_code=400, mimetype="application/json")
 
-    prompt = req_body.get('prompt')
+    prompt = req_body.get('prompt', '')
     if not prompt:
         # Return a more specific message if the prompt is empty or not provided
         return func.HttpResponse(json.dumps({"message": "Please ask a question."}), mimetype="application/json", status_code=400)
