@@ -22,7 +22,7 @@ def openai_handle_initial_msg(prompt):
     # Run the Assistant
     run = client.beta.threads.runs.create(
         thread_id=thread_id,
-        assistant_id='asst_wrmh8NPjVrSnTidnToqOANSP',
+        assistant_id='asst_qRU2rF6oUfYLJEVOHOnXT4FM',
     )
     # Loop until run status is 'requires_action' or 'completed'
     while True:
@@ -47,7 +47,7 @@ def openai_handle_initial_msg(prompt):
 
     tool_calls = run.required_action.submit_tool_outputs.tool_calls
     tool_call_ids = []  # List to store tool_call_ids
-    assistants = []  # List to store models
+    po_numbers = []  # List to store models
 
     # Iterate over each tool call
     for tool_call in tool_calls:
@@ -57,14 +57,14 @@ def openai_handle_initial_msg(prompt):
         # Extracting and printing model for each tool call
         arguments = tool_call.function.arguments
         arguments_parsed = json.loads(arguments)
-        assistant_name = arguments_parsed['assistant_name']
-        assistants.append(assistant_name)
+        po_number = arguments_parsed['po_number']
+        po_numbers.append(po_number)
 
     # Now tool_call_ids list contains all the tool_call_ids
     print("All tool call IDs:", tool_call_ids)
 
     # And models list contains all the models
-    print("All assistants: ", assistants)
+    print("All POs: ", po_numbers)
 
     run = client.beta.threads.runs.submit_tool_outputs(
     thread_id=thread_id,
@@ -90,4 +90,4 @@ def openai_handle_initial_msg(prompt):
         else:
             # If not, wait for some time before checking again
             time.sleep(2)  # Wait for 2 seconds
-    return None
+    return manager_message

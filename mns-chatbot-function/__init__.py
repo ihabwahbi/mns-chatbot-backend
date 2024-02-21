@@ -1,6 +1,7 @@
 import azure.functions as func
 import logging
 import json
+from openai_manager import openai_handle_initial_msg
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
@@ -18,5 +19,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         return func.HttpResponse(json.dumps({"message": "The question appears to be empty. Please ask a meaningful question."}), mimetype="application/json", status_code=400)
     else:
         # Process the prompt and generate a response
-        response_message = json.dumps({"message": "I am still getting developed, be patient! I'll get smarter I promise!"})
+        response = openai_handle_initial_msg(prompt)
+        response_message = json.dumps({"message": response})
         return func.HttpResponse(response_message, mimetype="application/json", status_code=200)
