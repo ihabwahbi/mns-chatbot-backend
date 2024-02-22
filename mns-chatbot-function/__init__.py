@@ -1,7 +1,8 @@
 import azure.functions as func
 import logging
 import json
-from utils.database.db_manager import get_material_info
+import psycopg2
+import os
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
@@ -22,3 +23,44 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         response = get_material_info(prompt)
         response_message = json.dumps({"message": response})
         return func.HttpResponse(response_message, mimetype="application/json", status_code=200)
+    
+def get_material_info(material_id):
+    # Database connection parameters from environment variables
+    conn_params = {
+        'dbname': os.getenv('DB_NAME'),
+        'user': os.getenv('DB_USER'),
+        'password': os.getenv('DB_PASS'),
+        'host': os.getenv('DB_HOST'),
+        'port': os.getenv('DB_PORT')
+    }
+    # SQL query to execute
+    query = """
+        SELECT material_description, plant, soh
+        FROM "material-soh"
+        WHERE material = %s;
+    """
+    
+    try:
+        # Connect to your database
+        print(conn_params)
+        conn = psycopg2.connect(**conn_params)
+        cursor = conn.cursor()
+        
+        # Execute the query
+        cursor.execute(query, (material_id,))
+        result = cursor.fetchall()
+        
+        # Convert query result to a more friendly format, if result is not empty
+        if result:
+            response = [{"material_description": row[0], "plant": row[1], "soh": str(row[2])} for row in result]
+        else:
+            response = []
+        
+        # Clean up
+        cursor.close()
+        conn.close()
+        
+        return response
+    except Exception as e:
+        print(f"Database query failed: {e}")
+        return None
