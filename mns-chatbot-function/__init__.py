@@ -2,6 +2,7 @@ import azure.functions as func
 import logging
 import json
 from utils.openai.openai_manager import openai_handle_initial_msg
+from utils.database.db_manager import get_material_info
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
@@ -20,6 +21,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         return func.HttpResponse(json.dumps({"message": "The question appears to be empty. Please ask a meaningful question."}), mimetype="application/json", status_code=400)
     else:
         # Process the prompt and generate a response
-        response = openai_handle_initial_msg(prompt)
+        response = get_material_info(prompt)
         response_message = json.dumps({"message": response})
         return func.HttpResponse(response_message, mimetype="application/json", status_code=200)

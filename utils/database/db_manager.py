@@ -34,7 +34,7 @@ def get_material_info(material_id):
         
         # Convert query result to a more friendly format, if result is not empty
         if result:
-            response = [{"material_description": row[0], "plant": row[1], "soh": row[2]} for row in result]
+            response = [{"material_description": row[0], "plant": row[1], "soh": str(row[2])} for row in result]
         else:
             response = []
         
