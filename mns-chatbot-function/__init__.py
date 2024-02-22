@@ -1,9 +1,7 @@
 import azure.functions as func
 import logging
 import json
-from utils.openai.openai_manager import openai_handle_initial_msg
 from utils.database.db_manager import get_material_info
-
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
