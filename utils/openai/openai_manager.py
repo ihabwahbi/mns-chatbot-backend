@@ -6,7 +6,7 @@ import json
 
 # Load environment variables from .env file
 load_dotenv()
-client = OpenAI(api_key="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")
+client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
 def openai_handle_initial_msg(prompt):
     print("User Question: ", prompt)
