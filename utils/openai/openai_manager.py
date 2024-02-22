@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import json
 
 # Load environment variables from .env file
-load_dotenv()
+# load_dotenv()
 client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
 def openai_handle_initial_msg(prompt):
