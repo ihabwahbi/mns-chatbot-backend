@@ -17,8 +17,8 @@ def get_material_info(material_id):
     }
     # SQL query to execute
     query = """
-        SELECT material_description, plant, soh
-        FROM "material-soh"
+        SELECT material, material_description, plant, planned_req_date, mrp_element_desc, mrp_element_number, mrp_element_item, rec_reqd_quantity, mrp_date, safety_stock, unit_of_measure, standard_price, mrp_element_data, currency
+        FROM "md04"
         WHERE material = %s;
     """
     
@@ -34,15 +34,32 @@ def get_material_info(material_id):
         
         # Convert query result to a more friendly format, if result is not empty
         if result:
-            response = [{"material_description": row[0], "plant": row[1], "soh": str(row[2])} for row in result]
+            db_output = [
+                {
+                    "material": row[0],
+                    "material_description": row[1],
+                    "plant": row[2],
+                    "planned_req_date": str(row[3]),
+                    "mrp_element_desc": row[4],
+                    "mrp_element_number": row[5],
+                    "mrp_element_item": row[6],
+                    "rec_reqd_quantity": row[7],
+                    "mrp_date": str(row[8]),
+                    "safety_stock": row[9],
+                    "unit_of_measure": row[10],
+                    "standard_price": row[11],
+                    "mrp_element_data": row[12],
+                    "currency": row[13]
+        } for row in result
+            ]
         else:
-            response = []
+            db_output = []
         
         # Clean up
         cursor.close()
         conn.close()
-        
-        return response
+        print("Database output is ", db_output)
+        return db_output
     except Exception as e:
         print(f"Database query failed: {e}")
         return None

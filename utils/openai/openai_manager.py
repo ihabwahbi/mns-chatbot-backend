@@ -3,9 +3,10 @@ from openai import OpenAI
 import os
 from dotenv import load_dotenv
 import json
+from utils.database.db_manager import get_material_info
 
 # Load environment variables from .env file
-# load_dotenv()
+load_dotenv()
 client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
 def openai_handle_initial_msg(prompt):
@@ -22,7 +23,7 @@ def openai_handle_initial_msg(prompt):
     # Run the Assistant
     run = client.beta.threads.runs.create(
         thread_id=thread_id,
-        assistant_id='asst_qRU2rF6oUfYLJEVOHOnXT4FM',
+        assistant_id='asst_kyAjRCF6whOx2mQYep81sDf0',
     )
     # Loop until run status is 'requires_action' or 'completed'
     while True:
@@ -38,40 +39,46 @@ def openai_handle_initial_msg(prompt):
             messages = client.beta.threads.messages.list(
                 thread_id=thread_id
             )
-            manager_message = messages.data[0].content[0].text.value
-            print(manager_message)
-            return manager_message
+            ai_initial_response = messages.data[0].content[0].text.value
+            print("AI Initial Response is: ", ai_initial_response)
+            return ai_initial_response
         else:
             # If not, wait for some time before checking again
             time.sleep(2)  # Wait for 2 seconds
 
     tool_calls = run.required_action.submit_tool_outputs.tool_calls
-    tool_call_ids = []  # List to store tool_call_ids
-    po_numbers = []  # List to store models
+    tool_call_id_all = []  # List to store tool_call_ids
+    part_number_all = [] 
+    po_number_all = []
 
     # Iterate over each tool call
     for tool_call in tool_calls:
         tool_call_id = tool_call.id
-        tool_call_ids.append(tool_call_id)
+        tool_call_id_all.append(tool_call_id)
 
         # Extracting and printing model for each tool call
         arguments = tool_call.function.arguments
         arguments_parsed = json.loads(arguments)
-        po_number = arguments_parsed['po_number']
-        po_numbers.append(po_number)
+        part_number = arguments_parsed.get('part_number')
+
+        if part_number:
+            part_number_all.append(part_number)
 
     # Now tool_call_ids list contains all the tool_call_ids
-    print("All tool call IDs:", tool_call_ids)
+    print("All tool call IDs:", tool_call_id_all)
 
     # And models list contains all the models
-    print("All POs: ", po_numbers)
+    print("Part Numbers: ", part_number_all)
+
+    print("Input to db function: ", part_number_all[0])
+    db_output = str(get_material_info(part_number_all[0]))
 
     run = client.beta.threads.runs.submit_tool_outputs(
     thread_id=thread_id,
     run_id=run.id,
     tool_outputs=[{
             "tool_call_id": tool_call_id,
-            "output": "correct"
+            "output": db_output
         }]
     )
 
