@@ -9,11 +9,17 @@ from utils.database.db_manager import get_material_info
 load_dotenv()
 client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
-def openai_handle_initial_msg(prompt):
+def openai_handle_initial_msg(prompt, thread_id=None):
     print("User Question: ", prompt)
-    thread = client.beta.threads.create()
-    thread_id = thread.id
-    print("New thread id has been created ", thread_id)
+    if thread_id is None:
+        # No thread_id was provided, create a new thread
+        thread = client.beta.threads.create()
+        thread_id = thread.id
+        print("New thread id has been created ", thread_id)
+    else:
+        # Use the provided thread_id
+        print("Using existing thread id ", thread_id)
+
     # Add message to Thread
     client.beta.threads.messages.create(
         thread_id=thread_id,
@@ -41,7 +47,7 @@ def openai_handle_initial_msg(prompt):
             )
             ai_initial_response = messages.data[0].content[0].text.value
             print("AI Initial Response is: ", ai_initial_response)
-            return ai_initial_response
+            return ai_initial_response, thread_id
         else:
             # If not, wait for some time before checking again
             time.sleep(2)  # Wait for 2 seconds
@@ -93,7 +99,7 @@ def openai_handle_initial_msg(prompt):
             messages = client.beta.threads.messages.list(thread_id=thread_id)
             manager_message = messages.data[0].content[0].text.value
             print(manager_message)
-            return manager_message
+            return manager_message, thread_id
         else:
             # If not, wait for some time before checking again
             time.sleep(2)  # Wait for 2 seconds
