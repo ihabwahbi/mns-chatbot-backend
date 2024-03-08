@@ -1,8 +1,6 @@
 import azure.functions as func
 import logging
 import json
-import psycopg2
-import os
 from utils.openai.openai_manager import openai_handle_initial_msg
 from utils.database.db_manager import get_material_info
 
