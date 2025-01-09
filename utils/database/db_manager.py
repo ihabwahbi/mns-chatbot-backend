@@ -18,7 +18,7 @@ def get_material_info(material_id):
     query = """
         SELECT material, material_description, plant, planned_req_date, mrp_element_desc, mrp_element_number, mrp_element_item, rec_reqd_quantity, mrp_date, safety_stock, unit_of_measure, standard_price, mrp_element_data, currency
         FROM "md04"
-        WHERE material = %s;
+        WHERE UPPER(material) = UPPER(%s);
     """
     
     try:
