@@ -77,4 +77,14 @@ jobs:
           app-name: 'mns-chatbot-backend'
           slot-name: 'Production'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          scm-do-build-during-deployment: true
+          enable-oryx-build: true
+      
+      - name: 'Verify Python packages'
+        shell: bash
+        run: |
+            echo "Listing installed packages:"
+            pip list
+            echo "Checking openai package:"
+            pip show openai
           
