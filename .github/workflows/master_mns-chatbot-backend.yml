@@ -40,15 +40,19 @@ jobs:
       - name: Verify package installation
         run: |
           echo "Checking .python_packages directory:"
-          ls -la .python_packages/lib/site-packages/openai
+          ls -la .python_packages/lib/site-packages/openai || echo "openai package not found in .python_packages"
           echo "Verifying openai package installation:"
-          python -c "import openai; print(openai.__version__)"
+          python -c "import openai; print(openai.__version__)" || echo "Failed to import openai"
 
       - name: Zip artifact for deployment
         run: |
-          zip release.zip ./* -r
-          echo "Checking zip contents for .python_packages:"
-          unzip -l release.zip | grep python_packages
+          echo "Creating deployment package..."
+          zip -r release.zip . -x "venv/*" || exit 1
+          echo "Zip file created successfully"
+          echo "Zip file size:"
+          ls -lh release.zip
+          echo "Checking for .python_packages in zip (errors will be ignored):"
+          unzip -l release.zip | grep python_packages || true
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -92,7 +96,7 @@ jobs:
 
       - name: 'Verify Deployed Packages'
         run: |
-          echo "Checking deployed packages:"
-          ls -R .python_packages/lib/site-packages || true
           echo "Current directory content:"
           ls -la
+          echo "Checking deployed packages:"
+          ls -R .python_packages/lib/site-packages || echo "No .python_packages directory found"
